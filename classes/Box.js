@@ -39,4 +39,15 @@ class Box{
 
        }
     }
+
+    update(){
+
+      if(this.visibility < 0 && this.visibility > - 1001){
+
+         score++;
+
+      }
+
+    }
+
 }

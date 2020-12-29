@@ -18,7 +18,7 @@ class SlingShot{
 
     }
 
-    attacher(bodyA){
+    attach(bodyA){
         
         this.body.bodyA = bodyA;
 

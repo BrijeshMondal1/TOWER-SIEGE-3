@@ -13,6 +13,16 @@ var block11, block12, block13, block14, block15;
 var block16, block17 ,block18, block19, block20;
 var block21, block22, block23, block24, block25;
 
+//creating score & chances
+var score = 0;
+var chances = 5;
+
+function preload(){
+
+  blackImg = loadImage("black.png");
+  starImg = loadImage("star.png");
+
+}
 //Setup function
 function setup() {
   //To create canvas
@@ -74,13 +84,30 @@ function setup() {
   hexagon = new polygon(200,300,35);
 
   //constraint
-  sling = new SlingShot(hexagon.body, 180, 290)
+  sling = new SlingShot(hexagon.body, 180, 290);
+
 }
 
 function draw() {
 
   //To assign brown background color
-  background("grey"); 
+  changeBackgroudImg();
+
+  if(hour >= 06 && hour <= 17){
+
+    background("orange")
+
+  }else{
+
+     background("grey");
+
+  }
+
+  textSize(20);
+  textFont("comic sans ms");
+  textStyle("bold");
+  fill("black");
+  text("Score : " + score, width - 150, 50);
 
   Engine.update(engine);
   
@@ -95,6 +122,15 @@ function draw() {
   block5.display("red");
   block6.display("red");
   block7.display("red");
+  
+  //updating first level
+  block1.update();
+  block2.update();
+  block3.update();
+  block4.update();
+  block5.update();
+  block6.update();
+  block7.update();
 
   //Displaying second level
   block8.display("blue");
@@ -103,16 +139,31 @@ function draw() {
   block11.display("blue");
   block12.display("blue");
 
+  //updating second level
+  block8.update();
+  block9.update();
+  block10.update();
+  block11.update();
+  block12.update();
+
   //Displaying third level
   block13.display("green");
   block14.display("green");
   block15.display("green");
 
+  //updating third level
+  block13.update();
+  block14.update();
+  block15.update();
+
   //Displaying fourth level
   block16.display("cyan");
+
+  //updating fourth level
+  block16.update();
   
   //displaying second ground
-  ground2.display("orange");
+  ground2.display("orangered");
 
   //Displaying bottom level
   block17.display("red");
@@ -120,14 +171,29 @@ function draw() {
   block19.display("red");
   block20.display("red");
   block21.display("red");
+  
+  //updating bottom level
+  block17.update();
+  block18.update();
+  block19.update();
+  block20.update();
+  block21.update();
 
   //Display middle level
   block22.display("blue");
   block23.display("blue");
   block24.display("blue");
+
+  //updating middle level
+  block22.update();
+  block23.update();
+  block24.update();
   
   //Displying upper level
   block25.display("cyan");
+
+  //Displying upper level
+  block25.update();
    
   //displaying constraint line
    sling.display();
@@ -136,26 +202,102 @@ function draw() {
   hexagon.display();
   
   //displaying ground 3
-  ground3.display("orange");
+  ground3.display("orangered");
   
+  gameOver();
+
 }
 //Mouse drag function to adjust the aim of hexagon
 function mouseDragged(){
   
+  if(score < 5000){
+    
     Matter.Body.setPosition(hexagon.body,{x:mouseX,y:mouseY});
 
+  }
 }
 
 //creating function mouseReleased
 function mouseReleased(){
-   
-    sling.fly();
+  
+     sling.fly();  
 
-    setTimeout(function(){
+    if(chances != 1){
+      setTimeout(function(){
 
-      Matter.Body.setPosition(hexagon.body,{x:100,y:200});
-      sling.attacher(hexagon.body);
+        chances = chances - 1;
+        Matter.Body.setPosition(hexagon.body,{x:100,y:200});
+        sling.attach(hexagon.body);
 
-    }, 2000);
+      }, 2000);
+    
+    }else if(chances === 1){
+
+      setTimeout(function(){
+
+          chances = 0;
+
+
+      }, 7000);
+
+    }
+
+}
+
+async function changeBackgroudImg(){
+
+  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
+  var responseJSON = await response.json();
+  hour = responseJSON.datetime.slice(11, 13);
+
+}
+
+function gameOver(){
+
+  if(chances === 0 || score === 5000){
+
+    image(blackImg , 0, 0, width * 2.5, height * 2.5);
+    console.log(chances);
+
+  }
+
+  if(score < 4801 && chances === 0){
+
+     textSize(50);
+     textStyle("bold");
+     fill("white");
+     text("Try again", width/2 - 50, height/2);
+
+  }else if(score === 5000){
+
+    textSize(50);
+    textStyle("bold");
+    fill("white");
+    text("You win", width/2 - 50, height/2);
+
+    if(chances >= 3){
+
+      for(var i = width/4 + 50; i < width/2 + width/4; i = i + 150){
+
+        image(starImg, i, height/2 - 200, 100, 100);
+
+      }
+    
+      }else if(chances === 2 || chances === 1){
+
+        for(var i = width/4 + 200; i < (width/2 + width/4) - 50; i = i + 150){
+
+          image(starImg, i, height/2 - 200, 100, 100);
+  
+        }
+
+      }else if(chances >= 0){
+
+        image(starImg, width/2 + 50, height/2 - 200, 100, 100);
+
+      }
+
+
+  }
 
 }
