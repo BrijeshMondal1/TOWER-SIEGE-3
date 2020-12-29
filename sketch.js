@@ -246,7 +246,7 @@ function mouseReleased(){
 
 async function changeBackgroudImg(){
 
-  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
+  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
   var responseJSON = await response.json();
   hour = responseJSON.datetime.slice(11, 13);
 
